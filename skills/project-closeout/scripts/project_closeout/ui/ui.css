@@ -28,3 +28,6 @@ main{max-width:950px;margin:0 auto;padding:0 20px 18px;position:relative;left:-1
 @media(max-width:460px){.settings-head{padding:18px 18px 15px}.settings-body{padding:0 18px 16px}.provider-model{grid-template-columns:1fr;gap:11px}#settings-dialog .dialog-actions{padding:12px 18px}}
 @media(prefers-reduced-motion:reduce){#enable-ai,#enable-ai:before{transition:none}}
 @media(forced-colors:active){#enable-ai{appearance:auto;width:24px}#enable-ai:before{display:none}}
+
+.brand img{display:block;height:32px;width:auto}.compact-brand{display:none}.nav-fold .compact-brand{display:block}
+@media(max-width:700px){.compact-brand{display:block}.nav-open .compact-brand{visibility:hidden}}

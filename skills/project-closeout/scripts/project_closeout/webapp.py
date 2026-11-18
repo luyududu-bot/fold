@@ -358,6 +358,8 @@ def handler_for(app):
         def do_GET(self):
             route = urlsplit(self.path).path
             assets = {"/": ("index.html", "text/html; charset=utf-8"),
+                      "/fold-logo.svg": ("fold-logo.svg", "image/svg+xml"),
+                      "/fold-icon.svg": ("fold-icon.svg", "image/svg+xml"),
                       "/ui.js": ("ui.js", "text/javascript; charset=utf-8"),
                       "/ui.css": ("ui.css", "text/css; charset=utf-8")}
             for name in ("source-tokens.css", "source-material.css", "source-theme.css", "reference-theme.css", "reference.html", "glass-ui-LICENSE.txt"):
