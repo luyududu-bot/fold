@@ -1,0 +1,12 @@
+.env
+.env.local
+.env.*.local
+config.local.json
+project-index.local.json
+analysis-settings.local.json
+.project-closeout/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/

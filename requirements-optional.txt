@@ -1,0 +1,2 @@
+# 可选：办公文档内容提取；基础 CLI 只依赖 Python 标准库。
+markitdown[pdf,docx,pptx,xlsx]

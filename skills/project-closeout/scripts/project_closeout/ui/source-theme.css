@@ -1,0 +1,33 @@
+/* Selective refinement of the existing mist workspace.
+ * glass-ui 0.38.0 (MIT) supplies type, control sizing, focus and filter parameters.
+ * Composition, teal palette, project previews, card geometry and selected plans
+ * retain this application's established design; this is not an upstream clone.
+ */
+:root{font-size:var(--text-body)}
+h1,.project-heading h1{font-size:var(--text-display);line-height:1.45;letter-spacing:var(--text-display--letter-spacing);font-weight:var(--text-display--font-weight)}
+.intro,.muted,.findings p{font-size:var(--text-body);line-height:1.85}
+.card-title{font-size:16px;line-height:1.6}
+.card-files,.card-meta,.collection-toolbar .muted,.footnote,.findings .footnote,.mode-pill,.artifact-chip,.plan-description,.plan-examples,.plan-counts>span,.plan-counts .move-count,.decision-bar p,.decision-note,.collection-foot{font-size:var(--text-label);line-height:1.8}
+.card-info{gap:9px;padding:17px 14px 15px}.card-meta{padding-top:12px}.card-files{color:#60777d}.card-meta{color:#6c8389}
+.card{border-color:#ffffffef;box-shadow:0 3px 6px #264b5804,0 14px 26px #264b5808;transition:transform var(--dur-base) ease-out,box-shadow var(--dur-base) ease-out}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 12px #264b5808,0 18px 32px #264b5812}
+.cover{border:1px solid #264b5806}.cover img{filter:none}.cover:has(img)::after{background:linear-gradient(0deg,#294c4f08,transparent 35%)}
+.sidebar{backdrop-filter:blur(var(--glass-blur)) saturate(180%);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(180%);box-shadow:inset 1px 1px 0 #ffffffa8,inset -1px -1px 0 #274d5810}
+.topbar{border-bottom-color:#ffffffa6}.breadcrumb,.connection{font-size:11px}.brand small{font-size:11px}.local-note{font-size:12px}.local-note span{font-size:11px}.settings-button small{font-size:11px}
+.page-heading{margin-bottom:24px}.collection-toolbar{margin-bottom:18px}.search{min-height:var(--size-field);padding:9px 12px}.search input{font-size:12px}.icon-button{width:calc(var(--size-control) + 4px);height:calc(var(--size-control) + 4px)}
+.plan-card{border-radius:18px;padding:22px 18px}.plan-head strong{font-size:15px}.plan-head small{font-size:11px;padding:3px 6px}.plan-description{min-height:44px;margin:15px 0 20px}.plan-counts strong{font-size:32px;letter-spacing:-1px}.plan-examples{min-height:57px;margin-top:18px;padding-top:13px}
+.plan-card.selected{background:radial-gradient(ellipse at 100% 0%,#47797a4d,transparent 70%),linear-gradient(145deg,#28565b,#193e45);box-shadow:inset 0 1px 0 #ffffff29,inset 1px 0 0 #ffffff0d,0 12px 24px #1b46531f}
+.plan-card.selected .plan-description{color:#d0e1e0}.plan-card.selected .plan-examples{color:#bad1d2}.plan-card.selected .plan-counts>span{color:#cedfde}
+.findings{gap:16px;padding:24px}.findings .row{margin-bottom:12px}.findings p{margin:7px 0}.findings .footnote{margin-top:14px}.finding-symbol{width:32px;height:32px}.retention{margin-top:26px}.section-heading>span{font-size:11px}
+.primary,.secondary{min-height:calc(var(--size-control) + 8px);padding:9px 20px;font-size:13px}.primary{background:#204d53;box-shadow:inset 0 1px 0 #ffffff24,0 2px 4px #1c434611}.primary:hover:not(:disabled){background:#173f45;box-shadow:inset 0 1px 0 #ffffff24,0 4px 10px #244c531a}
+.decision-bar{padding:20px 24px;box-shadow:0 2px 6px #294e5a06,0 10px 30px #294e5a0d;backdrop-filter:blur(var(--glass-blur)) saturate(180%);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(180%)}.decision-bar strong{font-size:14px}.decision-note{color:#627e84}
+.review-panel>summary,details summary{font-size:13px}.review-panel>summary>span{font-size:11px}.row select{font-size:12px;min-height:var(--size-field)}
+table{font-size:12px}th,td{padding:14px 10px;line-height:1.8}th{color:#607b81}td:nth-child(4){color:#687e83}
+.field input,.field select{min-height:var(--size-field)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:var(--focus-width) solid #428590;outline-offset:var(--focus-offset)}
+.workspace-footer{font-size:11px}
+@media(min-width:1350px){.cover{height:190px}.card-info{padding:20px 17px 16px}.card-title{font-size:17px}main{padding-top:34px}}
+@media(max-width:1000px){.plan-card{padding:19px 13px}.plan-head strong{font-size:14px}.plan-description{min-height:65px}.plan-head small{font-size:10px}.card-info{padding:16px 11px 14px}.card-meta{font-size:11px}.card-files{font-size:12px}}
+@media(max-width:760px){.plan-card{padding:19px 16px}.plan-description{min-height:44px}.sidebar{box-shadow:inset 0 1px 0 #ffffffa8}.intro{font-size:13px}.settings-button small{display:none}}
+@media(max-width:540px){.plan-description{min-height:0;margin:14px 0}.plan-examples{min-height:0;margin-top:10px}.plan-card{padding:20px}.card-info{padding:17px 13px 15px}.card-meta{font-size:11px}.card-title{font-size:16px}.project-heading h1{font-size:24px}.search input{font-size:14px}.connection{font-size:10px}.decision-note{font-size:11px}.collection-foot{font-size:11px}.field input,.field select{font-size:16px}.findings{padding:20px 18px;gap:12px}.findings p{font-size:13px}.plan-head small{font-size:11px}.plan-counts .move-count{font-size:11px}.sidebar nav button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.card:hover{transform:none}}
