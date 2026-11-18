@@ -30,7 +30,8 @@ function renderProjects(){
   matches.sort((a,b)=>{const rank=p=>recent.includes(p.id)?recent.indexOf(p.id):1e6;return rank(a)-rank(b)||(b.last_activity||0)-(a.last_activity||0);});
   matches.forEach(p=>{const card=node("button",undefined,"card");card.title=p.display_name;card.setAttribute("aria-label","分析项目："+p.display_name);
     const cover=coverFallback(p),info=node("span",undefined,"card-info"),arrow=node("span",undefined,"card-arrow");arrow.append(icon("arrow"));
-    info.append(node("strong",p.display_name),node("span",caption(p)),node("small",p.threads.length?p.threads.length+" 个相关聊天":"本地项目"));
+    const source=p.threads.length ? p.threads.length+" 个相关聊天" : "本地项目";
+    info.append(node("strong",p.display_name),node("small",[caption(p),source].filter(Boolean).join(" · ")));
     card.append(cover,info,arrow);card.onclick=()=>choose(p);$("cards").append(card);loadCover(p,cover);});
   const label={project:"我的项目",chat:"单独聊天",folder:"其他文件夹"}[tab];$("picker-title").textContent=label;$("list-heading").textContent=q?"搜索结果":{project:"全部项目",chat:"全部聊天",folder:"全部文件夹"}[tab];
   $('empty-state').hidden=matches.length>0;
