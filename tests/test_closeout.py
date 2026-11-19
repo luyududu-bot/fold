@@ -9,6 +9,7 @@ import unittest
 import urllib.error
 from pathlib import Path
 from unittest.mock import patch
+from symlink_fixture import create_symlink
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/project-closeout/scripts"))
 from project_closeout import core, providers
@@ -122,8 +123,8 @@ class ProjectTest(unittest.TestCase):
         outside = Path(self.tmp.name) / "outside"
         outside.mkdir()
         (outside / "secret.txt").write_text("must-not-be-read")
-        (self.root / "external").symlink_to(outside, target_is_directory=True)
-        (self.root / "alias.txt").symlink_to(outside / "secret.txt")
+        create_symlink(self.root / "external", outside, target_is_directory=True)
+        create_symlink(self.root / "alias.txt", outside / "secret.txt")
         p = self.plan()
         self.assertEqual(self.record(p, "external")["kind"], "protected-directory")
         self.assertNotIn("must-not-be-read", json.dumps(p))
@@ -172,7 +173,7 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual((self.root / "work/previews/page-01.png").read_bytes(), b"new-important-content")
 
     def test_symlinked_state_refused(self):
-        (self.root / core.STATE).symlink_to(Path(self.tmp.name), target_is_directory=True)
+        create_symlink(self.root / core.STATE, Path(self.tmp.name), target_is_directory=True)
         with self.assertRaises(core.CloseoutError):
             core.apply_plan(self.plan(), self.root, ["work/previews/page-01.png"])
 

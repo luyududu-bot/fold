@@ -27,6 +27,10 @@ def input_directory(raw):
     if not raw:
         raise CloseoutError("未输入文件夹")
     if not Path(raw).expanduser().is_dir():
+        if os.name == "nt":
+            windows_path = raw.strip('"').replace("\\ ", " ")
+            if Path(windows_path).expanduser().is_dir():
+                return root_path(windows_path)
         try:
             values = shlex.split(raw)
         except ValueError:

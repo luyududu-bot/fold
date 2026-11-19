@@ -6,6 +6,7 @@ import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from symlink_fixture import create_symlink
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/project-closeout/scripts"))
 from project_closeout import core, providers
@@ -39,7 +40,8 @@ class SimplifiedFlowTest(unittest.TestCase):
         # Model the system Trash without modifying the developer's actual Trash.
         self.fake_trash = self.base / "test-trash"
         self.fake_trash.mkdir()
-        for mock in (patch("project_closeout.core.trash_directory",return_value=self.fake_trash),
+        for mock in (patch("project_closeout.core.WINDOWS_RECYCLE", False),
+                     patch("project_closeout.core.trash_directory",return_value=self.fake_trash),
                      patch("project_closeout.core.system_trash",side_effect=lambda folder: folder.rename(self.fake_trash / folder.name))):
             mock.start();self.addCleanup(mock.stop)
         self.app = App(self.catalog, self.prefs)
@@ -242,7 +244,7 @@ class SimplifiedFlowTest(unittest.TestCase):
     def test_scoped_clear_keeps_other_tasks_dependencies_and_restores(self):
         for rel,content in [("A/final.pdf","delivery"),("A/reusable.svg","vector"),("A/.env","private"),("B/manual.md","../A/reusable.svg")]:
             f=self.root/rel;f.parent.mkdir(exist_ok=True);f.write_text(content)
-        (self.root/"A/link").symlink_to(self.root/"uncertain.bin")
+        create_symlink(self.root/"A/link", self.root/"uncertain.bin")
         job=self.start();self.wait(job)
         d=self.app.action("/api/task",{"job":job,"scope":"A"})
         req={"job":job,"tier":"clear","version":d["version"]}

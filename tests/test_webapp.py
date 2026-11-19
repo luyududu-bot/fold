@@ -10,6 +10,7 @@ import urllib.request
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
+from symlink_fixture import create_symlink
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/project-closeout/scripts"))
 from project_closeout.catalog import project_catalog
@@ -33,7 +34,8 @@ class LocalUITest(unittest.TestCase):
         # Model the system Trash without modifying the developer's actual Trash.
         self.fake_trash = self.base / "test-trash"
         self.fake_trash.mkdir()
-        for mock in (patch("project_closeout.core.trash_directory",return_value=self.fake_trash),
+        for mock in (patch("project_closeout.core.WINDOWS_RECYCLE", False),
+                     patch("project_closeout.core.trash_directory",return_value=self.fake_trash),
                      patch("project_closeout.core.system_trash",side_effect=lambda folder: folder.rename(self.fake_trash / folder.name))):
             mock.start();self.addCleanup(mock.stop)
         self.app = App(self.catalog, Preferences(self.base / "analysis-settings.local.json"))
@@ -120,7 +122,7 @@ class LocalUITest(unittest.TestCase):
         private.write_bytes(png)
         outside = self.base / 'outside.png'
         outside.write_bytes(png)
-        (self.root / 'outputs/linked.png').symlink_to(outside)
+        create_symlink(self.root / 'outputs/linked.png', outside)
         (self.root / 'outputs/invalid.png').write_bytes(b'not an image')
         self.assertEqual(self.app.preview(self.project['id'])[0], b'')
         image = self.root / 'outputs/drawing.png'
@@ -138,7 +140,7 @@ class LocalUITest(unittest.TestCase):
         other = self.base / 'other'
         other.mkdir()
         (other / 'private.png').write_bytes(b'\x89PNG\r\n\x1a\n')
-        (self.root / 'outputs').symlink_to(other, target_is_directory=True)
+        create_symlink(self.root / 'outputs', other, target_is_directory=True)
         self.assertEqual(self.app.preview(self.project['id'])[0], b'')
 
 

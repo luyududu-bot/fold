@@ -3,6 +3,7 @@ import ast
 import hashlib
 import json
 import os
+import posixpath
 import re
 import stat
 import subprocess
@@ -10,9 +11,10 @@ import tempfile
 import uuid
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 STATE = ".project-closeout"
+WINDOWS_RECYCLE = os.name == "nt"
 SKIP_DIRS = {".git", ".hg", ".svn", "node_modules", ".venv", "venv", STATE}
 TEXT_EXT = {".md", ".txt", ".py", ".js", ".ts", ".tsx", ".jsx", ".css", ".html",
             ".json", ".csv", ".tsv", ".yaml", ".yml", ".toml", ".xml", ".svg",
@@ -57,9 +59,18 @@ def safe_path(root, relative):
         raise CloseoutError("拒绝越界路径：" + relative)
     current = Path(root)
     for part in p.parts:
+        if os.name == "nt" and (":" in part or part.endswith((" ", ".")) or PureWindowsPath(part).is_reserved()):
+            raise CloseoutError("无效的 Windows 文件名：" + relative)
         current = current / part
         if current.is_symlink():
             raise CloseoutError("拒绝符号链接路径：" + relative)
+        if os.name == "nt":
+            try:
+                attributes = current.lstat().st_file_attributes
+            except FileNotFoundError:
+                continue
+            if attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+                raise CloseoutError("拒绝重解析点路径：" + relative)
     return current
 
 
@@ -247,7 +258,7 @@ def scan(root, use_markitdown=False, max_files=20000, text_limit=512 * 1024):
         token = token.rstrip(".:!?，。；：！？“”‘’").replace("\\", "/")
         if token in paths:
             found.add(token)
-        normalized = os.path.normpath(str(PurePosixPath(origin).parent / token))
+        normalized = posixpath.normpath(str(PurePosixPath(origin).parent / token))
         if normalized in paths:
             found.add(normalized)
         if token in names:
@@ -495,7 +506,7 @@ def system_trash(folder):
 
 
 def trash_run(root, run_id):
-    """Send just the verified contents of one applied batch to macOS Trash."""
+    """将核验过的一批文件送入系统回收站。"""
     root = root_path(root)
     if not re.fullmatch(r"[a-f0-9]{32}", run_id):
         raise CloseoutError("无效批次")
@@ -518,6 +529,9 @@ def trash_run(root, run_id):
         if not expected or seen != set(expected):raise CloseoutError("本次清单不完整")
         label = trash_label(root, run_id)
         stage = files.with_name(label)
+        if WINDOWS_RECYCLE:
+            from .windows_recycle import send_batch
+            return send_batch(files, stage, journal_path, j)
         dest = trash_directory(root) / label
         if stage.exists() or dest.is_symlink() or dest.exists():
             raise CloseoutError("目标文件夹已存在，请先核对")
@@ -544,6 +558,9 @@ def undo(root, run_id):
         journal = read_json(journal_path)
         if journal.get("schema") != 1 or journal.get("id") != run_id or journal.get("root") != str(root):
             raise CloseoutError("归档记录不匹配")
+        if journal.get("destination") == "windows-recycle-bin":
+            from .windows_recycle import prepare_undo
+            prepare_undo(root, journal_path, journal)
         def saved_path(path):
             if journal.get("destination")=="trash":
                 label=trash_label(root,run_id)

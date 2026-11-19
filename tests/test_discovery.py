@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from symlink_fixture import create_symlink
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/project-closeout/scripts"))
 from project_closeout.discovery import choose_project, discover_projects
@@ -57,7 +58,7 @@ class DiscoveryTest(unittest.TestCase):
     def test_symlinks_skipped_and_overlapping_roots_deduplicated(self):
         external = self.root / "outside"
         (external / ".git").mkdir(parents=True)
-        (self.workspace / "external-link").symlink_to(external, target_is_directory=True)
+        create_symlink(self.workspace / "external-link", external, target_is_directory=True)
         result = discover_projects([self.workspace, self.project])
         self.assertEqual(len(result["projects"]), 2)
         self.assertNotIn(str(external), {p["path"] for p in result["projects"]})

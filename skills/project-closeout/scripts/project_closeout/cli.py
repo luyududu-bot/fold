@@ -6,7 +6,7 @@ from pathlib import Path
 
 from . import __version__
 from .core import (CloseoutError, apply_plan, atomic_json, make_plan, now, read_json,
-                   report, root_path, scan, state_path, undo, validate_plan)
+                   report, root_path, scan, state_path, trash_run, undo, validate_plan)
 from . import providers
 from .discovery import choose_project, discover_projects, print_projects
 
@@ -71,6 +71,7 @@ def parser():
     apply.add_argument("--root", required=True)
     apply.add_argument("--select", action="append", required=True, help="明确选择的相对路径，可重复")
     apply.add_argument("--yes", action="store_true", help="确认执行列出的文件")
+    apply.add_argument("--recycle", action="store_true", help="将选中的批次移入系统回收站")
     restore = sub.add_parser("undo", help="恢复一次归档，遇到冲突停止，不覆盖原文件")
     restore.add_argument("--root", required=True)
     restore.add_argument("--run", required=True)
@@ -114,6 +115,11 @@ def main(argv=None):
             if not args.yes:
                 raise CloseoutError("执行需要 --yes；请先检查报告和 --select 文件清单")
             result = apply_plan(plan, root, args.select)
+            if args.recycle:
+                print("恢复批次号：" + result["id"])
+                trash_run(root, result["id"])
+                print("已移到系统回收站。清空前可以使用 undo 恢复。")
+                return 0
             print("已隔离：" + result["id"])
             print("隔离不释放磁盘空间；文件仍保存在项目内的 .project-closeout/runs/。")
             print("恢复：undo --root " + json.dumps(str(root), ensure_ascii=False) + " --run " + result["id"] + " --yes")

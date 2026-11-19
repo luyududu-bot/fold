@@ -68,6 +68,8 @@ python3 TOOL apply --root ROOT --plan PLAN_JSON --select work/previews/page-01.p
 python3 TOOL undo --root ROOT --run RUN_ID --yes
 ```
 
+用户选择系统回收站时，在已确认的 apply 命令上加 `--recycle`。Windows 回收站按项目和批次显示文件夹，网页「撤销」或上述 undo 命令会将文件放回原路径。接到系统确认后才报告已移入回收站。
+
 每个 `--select` 是一条用户选定的候选路径。项目自预览后发生变化则重新盘点，不绕过快照检查。
 隔离文件保留在 `.project-closeout/runs/`，不会释放磁盘空间；本版不永久删除。
 完成后报告移动数量、隔离位置和恢复命令。不要声称已实现永久清理、图片视觉理解或自动读取所有历史聊天。
